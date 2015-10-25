@@ -1,3 +1,4 @@
+#include <functional>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,8 +9,53 @@ using std::string;
 class Solution {
 public:
 	// More efficient approach. This approach utilizes this fact:
+	// If the current matching fails, only fall back to the last *.
 	bool isMatch(string s, string p) {
-		
+		// Last star pos of p.
+		int last_star = -1;
+		// The position in s that matches p[0:last_star].
+		int last_star_match = -1;
+
+		// i iterates s, j iterates p.
+		int i = 0, j = 0;
+
+		auto reset = [&]()-> bool {
+			if (last_star < 0) return false;
+
+			last_star_match++;
+			j = last_star + 1;
+			i = last_star_match + 1;
+			return true;
+		};
+
+		while (i < s.size()) {
+			if (j >= p.size()) {
+				if (!reset()) return false;
+				continue;
+			}
+
+			switch (p[j]) {
+			case '*':
+				last_star = j;
+				last_star_match = i - 1;
+				++j;
+				break;
+			case '?':
+				++i; ++j;
+				break;
+			default:
+				if (s[i] == p[j]) {
+					++i; ++j;
+				} else if (!reset()) {
+					return false;
+				}
+			}
+		}
+
+		while (j < p.size() && p[j] == '*') {
+			++j;
+		}
+		return j == p.size();
 	}
 
 	bool DPSolution(const string &s, const string &p) {
@@ -56,7 +102,7 @@ int main(int argc, char** argv) {
 	string p(argv[2]);
 
 	Solution sol;
-	if (sol.DPSolution(s, p)) {
+	if (sol.isMatch(s, p)) {
 		std::cout << s << " matches " << p << std::endl;
 	} else {
 		std::cout << s << " doesn't match " << p << std::endl;
