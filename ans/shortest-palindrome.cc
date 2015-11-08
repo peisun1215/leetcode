@@ -26,7 +26,7 @@ public:
 			} else if (si == 0) {
 				++ri;
 			} else {
-				si = kmp.Prefix(si);
+				si = kmp.Prefix(si - 1);
 			}
 		}
 

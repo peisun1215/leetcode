@@ -8,7 +8,7 @@ class Solution {
 public:
 	vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
 		std::sort(candidates.begin(), candidates.end());
-		vector<vector<int>> out;
+    vector<vector<int>> out;
 		vector<int> prefix;
 		combinationSum2(candidates, 0, target, out, prefix);
 		return out;
