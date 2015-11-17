@@ -16,9 +16,8 @@ typedef long long int64;
 struct Node {
   int64 num;
   bool has_num = false;
-  bool is_empty = true;
   vector<Node*> children;
-  explicit Node(int64 _num) : num(_num), has_num(true), is_empty(false) {}
+  explicit Node(int64 _num) : num(_num), has_num(true) {}
   Node() {}
   ~Node() {
     for (auto* node : children) {
@@ -43,7 +42,7 @@ struct Node {
 };
 
 // Algorithm:
-// For every [, create a Node without num.
+// For every [, create nullptr.
 // For every num, create a Node with num.
 // For every ], pop till ].
 Node* MiniParser(const string& input) {
@@ -53,18 +52,18 @@ Node* MiniParser(const string& input) {
   int64 i = 0;
   while (i < (int64)input.size()) {
     if (input[i] == '[') {
-      s.push(new Node());
+      s.push(nullptr);
       ++i;
     } else if (input[i] == ']') {
       // pop.
       vector<Node*> nodes;
-      while (!s.empty() && !s.top()->is_empty) {
+      while (!s.empty() && s.top()) {
         nodes.push_back(s.top());
         s.pop();
       }
       assert(!s.empty());
-      s.top()->is_empty = false;
       std::reverse(nodes.begin(), nodes.end());
+      s.top() = new Node();
       s.top()->children = std::move(nodes);
       ++i;
     } else if (input[i] == ',' || input[i] == ' ') {
